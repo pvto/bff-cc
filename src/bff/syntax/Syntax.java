@@ -1,6 +1,7 @@
 package bff.syntax;
 
 import bff.RT;
+import bff.Scope;
 import bff.io.StreamRegex;
 import bff.z.Trees;
 import java.io.PrintStream;
@@ -21,7 +22,7 @@ public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
     //                       (4) * (kleene) marks indefinite repetition (0..n) of the preceding item;
     //                       (5) ? repeats 0 or 1 times of the preceding item;
     //                       (6) < and > bound a composite group; you can use ?*| after it, or even nest groups if you need to (though it looks a bit confusing)
-    //Contention is resolved this way:
+    //Contention is resolved this way (will be anyway, if the idea won't change).
     // 1. compute the maximum common terminal count 'c' for A and B, reading from left to right, where A precedes B as in A|B or in A?B or A*B
     // 2. if c>0, 
     //      2.1. if it was A|B and B is longer -> switch the places of A and B
@@ -61,28 +62,6 @@ public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
     public static boolean isGroup(Syntax s) { return bff.RT.classIs(s, Syntax.sGroup.class); }
     public static boolean isTerminal(Syntax s) { return bff.RT.classIs(s, Syntax.sT.class); }
 
-    
-    static public class Holder {
-        public int count = 0;
-        public final Syntax[] syntaxes = new Syntax[1024];
-        public final void addSyntax(Syntax sy) {
-            if (syntaxes[sy.x] != null) {
-                if (syntaxes[sy.x].s.equals(sy.s) && (syntaxes[sy.x].getClass().isAssignableFrom(sy.getClass())))
-                    {return;}
-                bff.RT.throwRte("attempted redefinition of syntax '"+sy+" - found: "+syntaxes[sy.x]);  
-            }
-            syntaxes[sy.x] = sy;  count++;  }
-        public Holder defaults$() {
-            for(Syntax sy : new Syntax[]{
-                new s_LB(), new s_RB(), new s_LC(), new s_RC(), new s_LD(), new s_RD(),
-                new s__n(), new s_o(), new s_s(), 
-                new s_se(), new s_beb(), new s_oe(), new s_eoe(), new s_eo(), new s_eoeoe(),
-                new s_e(), new s_dEd()
-            }) addSyntax(sy);
-            return this; }
-        public final void initAll() { for(Syntax sy : syntaxes) if (sy != null) sy.init(this); }
-        public int count() { return count; }
-    }
     //syntax categories
     /*all terminal sentences should inherit this*/      static public class sT extends Syntax{} 
     /*any symbols should inherit this; 
@@ -113,10 +92,37 @@ public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
                                 public List<Syntax.sT> possibleTerminalContinuations;
                                 public RegexMapper<Syntax.sT> mapper;
     /** */                      public int lookup = 0;
-    /** runtime instruments*/   public bff.$ parser;  public <T extends Syntax> T parser$(bff.$ parser) {this.parser = parser;  return (T)this;}
+        /** runtime instruments*/   public bff.$ parser;  public <T extends Syntax> T parser$(bff.$ parser) {this.parser = parser;  return (T)this;}
+    /** passed on to lexer... */public bff.$ eval;
     @Override public String toString() { return x + (lookup>1?"[L"+lookup+"]":"") + " -> " + (s!=null?s+" ":"") + this.getClass().getSimpleName(); }
     
 
+    
+    static public class Holder {
+        public int count = 0;
+        public final Syntax[] syntaxes = new Syntax[1024];
+        public final void addSyntax(Syntax sy) {
+            if (syntaxes[sy.x] != null) {
+                if (syntaxes[sy.x].s.equals(sy.s) && (syntaxes[sy.x].getClass().isAssignableFrom(sy.getClass())))
+                    {return;}
+                bff.RT.throwRte("attempted redefinition of syntax '"+sy+" - found: "+syntaxes[sy.x]);  
+            }
+            syntaxes[sy.x] = sy;  count++;  }
+        public Holder defaults$() {
+            for(Syntax sy : new Syntax[]{
+                new s_LB(), new s_RB(), new s_LC(), new s_RC(), new s_LD(), new s_RD(),
+                new s__n(), new s_o(), new s_s(), 
+                new s_se(), new s_beb(), new s_oe(), new s_eoe(), new s_eo(), new s_eoeoe(),
+                new s_e(), new s_dEd()
+            }) addSyntax(sy);
+            return this; }
+        public final void initAll() { for(Syntax sy : syntaxes) if (sy != null) sy.init(this); }
+        public int count() { return count; }
+    }
+    
+    
+    
+    
 // an aid to eliminate syntax juggling
     private boolean locked = false;
     public synchronized void lock() {

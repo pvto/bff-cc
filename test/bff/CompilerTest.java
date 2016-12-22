@@ -12,9 +12,9 @@ public class CompilerTest {
         AST root = C.rootAst;
         _int I = new _int();
         I.imp(C, root);
-        $ A = RT.crConstant(3).init$(I.INT, new int[]{1,1});
-        $ B = RT.crConstant(8).init$(I.INT, new int[]{1,3});
-        $ plus = new _int.$iadd().init$(I._add, new int[]{1,2});
+        $ A = RT.crConstant(3);
+        $ B = RT.crConstant(8);
+        $ plus = _int.iadd;
         Object res = plus.eval(new Scope(), A, B);
         assertEquals(11, ((Integer)res).intValue());
     }

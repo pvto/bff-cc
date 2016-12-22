@@ -119,4 +119,5 @@ public class RT {
 
     static public <T> LinkedList<T> ll() { return new LinkedList<T>(); }
 
+    static public Object eval(Scope s, Object a) { return classIs(a, $.class) ? (($)a).eval(s) : a; }
 }

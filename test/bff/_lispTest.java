@@ -14,10 +14,10 @@ public class _lispTest {
         L.imp(C, root);
         _int I = new _int();
         I.imp(C, root);
-        $ A = RT.crConstant(3).init$(I.INT, Arf.ints(0,5));
-        $ B = RT.crConstant(8).init$(I.INT, Arf.ints(0,8));
-        $ plus = new _int.$iadd().init$(I._add, Arf.ints(0,2));
-        $ lisp = new _lisp.$lisp().init$(L.Ln, Arf.ints(0,0));
+        $ A = RT.crConstant(3);
+        $ B = RT.crConstant(8);
+        $ plus = _int.iadd;
+        $ lisp = new _lisp.$lisp();
         Object res = lisp.eval(new Scope(), plus, A, B);
         assertEquals("L(+, 3, 8)", 11, res);
     }

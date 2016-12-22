@@ -1,5 +1,6 @@
 package bff.syntax;
 
+import bff.Verb;
 import bff.io.FeatureInputStream;
 import java.io.IOException;
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class LexerTest {
         Lexer L = new Lexer(lang);
         String g = "aabbba";
         FeatureInputStream fin = bff.RT.fin(g);
-        Lexer.Lexed res = L.lex(fin);
+        Verb res = L.lex(fin);
 //        res.print(System.out);
         assertEquals(4, res.matter.size());
         assertEquals(2, res.matter.get(0)./* * */matter.size() );
@@ -41,7 +42,7 @@ public class LexerTest {
 
     @Test public void testKleene() throws IOException {
         Lexer L = new Lexer(ablang("<ab*>*","ab"));
-        Lexer.Lexed res = L.lex(bff.RT.fin("abbaba"));
+        Verb res = L.lex(bff.RT.fin("abbaba"));
         assertEquals("b", res.matter.get(0).matter.get(1).matter.get(1).matter.get(0).word);
         assertEquals(1, res.matter.get(0).matter.get(1).matter.get(1).matter.size());
     }
@@ -52,7 +53,7 @@ public class LexerTest {
             'x', "ax*"
         };
         Lexer L = new Lexer(lang(lang, 'S', "x"));
-        Lexer.Lexed res = L.lex(bff.RT.fin("aaa"));
+        Verb res = L.lex(bff.RT.fin("aaa"));
         assertEquals(3, res.terminalCount());
     }
 
@@ -64,7 +65,7 @@ public class LexerTest {
             'y', "bx*"
         };
         Lexer L = new Lexer(lang(lang, 'S', "x"));
-        Lexer.Lexed res = L.lex(bff.RT.fin("ababa"));
+        Verb res = L.lex(bff.RT.fin("ababa"));
         assertEquals(5, res.terminalCount());
     }
 
@@ -77,7 +78,7 @@ public class LexerTest {
             'z',"cx?"
         };
         Lexer L = new Lexer(lang(lang, 'S', "x"));
-        Lexer.Lexed res;
+        Verb res;
         assertEquals(5, (res = L.lex(bff.RT.fin("abccc"))).terminalCount());
         assertEquals(8, (res = L.lex(bff.RT.fin("abcabcac"))).terminalCount());
         assertEquals(6, (res = L.lex(bff.RT.fin("ababac"))).terminalCount());
@@ -95,7 +96,7 @@ public class LexerTest {
             'y', "x*"
         };
         Lexer L = new Lexer(lang(lang, 'S', "y"));
-        Lexer.Lexed res = L.lex(bff.RT.fin("aabba"));
+        Verb res = L.lex(bff.RT.fin("aabba"));
         assertEquals(5, res.terminalCount());
     }
 
@@ -105,7 +106,7 @@ public class LexerTest {
             'x', "<a|b|cdd>*",
         };
         Lexer L = new Lexer(lang(lang, 'S', "x"));
-        Lexer.Lexed res = L.lex(bff.RT.fin("babcdd"));
+        Verb res = L.lex(bff.RT.fin("babcdd"));
         assertEquals(6, res.terminalCount());
         assertEquals(12, L.lex(bff.RT.fin("aaacddcddbbb")).terminalCount());
     }
@@ -117,7 +118,7 @@ public class LexerTest {
             'å', "<(x)>|x",
         };
         Lexer L = new Lexer(lang(lang, 'S', "å"));
-        Lexer.Lexed res = L.lex(bff.RT.fin("(((1)))"));
+        Verb res = L.lex(bff.RT.fin("(((1)))"));
         assertEquals(7, res.terminalCount());
         assertEquals(1, L.lex(bff.RT.fin("1")).terminalCount());
     }
@@ -129,7 +130,7 @@ public class LexerTest {
             'y', "<xox>|x"
         };
         Lexer L = new Lexer(lang(lang, 'S', "y"));
-        Lexer.Lexed res = L.lex(bff.RT.fin("1*0*1*1"));
+        Verb res = L.lex(bff.RT.fin("1*0*1*1"));
         Lexer.simplifyMatter(res);
         res.printMatter(System.out);
         assertEquals(7, res.terminalCount());
@@ -153,7 +154,7 @@ public class LexerTest {
                 
         };
         Lexer L = new Lexer(lang(lang, 'S', "§")){{whitespace=" \t\r\n";}};
-        Lexer.Lexed res = L.lex(bff.RT.fin("f(x + g(y + 7)); foo = 1; y = 2;"));
+        Verb res = L.lex(bff.RT.fin("f(x + g(y + 7)); foo = 1; y = 2;"));
         Lexer.simplifyMatter(res);
         res.printMatter(System.out);
         assertEquals(20, res.terminalCount());
@@ -169,7 +170,7 @@ public class LexerTest {
             'z',"<x|y|å>*"
         };
         Lexer L = new Lexer(lang(lang, 'S', "z"));
-        Lexer.Lexed res;
+        Verb res;
         assertEquals(6, (res = L.lex(bff.RT.fin("ccabaa"))).terminalCount());
 
     }

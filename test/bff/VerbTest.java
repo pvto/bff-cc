@@ -10,13 +10,12 @@ public class VerbTest {
 
     @Test public void testVerbs() throws IOException
     {
-        $ iadd = _int.iadd;
         $ second = new $.Id(){{name="2nd";} public Object eval(Scope s, Object a, Object b) { return b; } };
         Object[] vlang = {
             'i', "#-?[0-9]+", _int.iparse,
             '+', "#\\+", null,
             'A', "+a", second,
-            'a', "iA?", iadd,
+            'a', "iA?", _int.iadd,
         };
         Lexer L = new Lexer(vlang(vlang, 'S', "a"));
         Verb res = L.lex(bff.RT.fin("3+33+0"));

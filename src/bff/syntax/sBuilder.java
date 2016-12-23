@@ -30,11 +30,21 @@ public final class sBuilder {
         { 
             final char c = (char)lang[i++];
             final String y = (String)lang[i++];
-            $ pred = ($)lang[i++];
+            Syntax s;
             if (y.startsWith("#"))
-                h.addSyntax(new Syntax.sT(){{x= c; s= y; eval= pred;}});
+                s = new Syntax.sT(){{x= c; s= y;}};
             else
-                h.addSyntax(new Syntax(){{x= c; s= y; eval=pred;}});
+                s = new Syntax(){{x= c; s= y;}};
+            Object o = lang[i++];
+            if (o != null) {
+                if (bff.RT.classIs(o, $.class))
+                    s.eval = ($)o;
+                else if (bff.RT.classIs(o, $[].class)) {
+                    s.evalTmp = ($[])o;
+                }
+                else bff.RT.throwRte("Supplied 3rd term is not a verb nor an array of such - " + o);
+            }
+            h.addSyntax(s);
         }
         Syntax start = new Syntax(){{x= Sc; s= S;}};
         h.addSyntax(start);

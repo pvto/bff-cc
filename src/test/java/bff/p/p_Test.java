@@ -24,7 +24,6 @@ public class p_Test {
         InputStream in = new ByteArrayInputStream(s.getBytes(RT.UTF8));
         i.parse(in, C);
         assertTrue(null == Arf.find(C.AST_L_FUNCTIONNS.chid, new _lisp().Ln));
-        assertTrue(null != Arf.find(C.AST_L_FUNCTIONS.chid, RT.findModule(new _int())._add));
         assertTrue(null != Arf.find(C.AST_L_FUNCTIONNS.chid, RT.findModule(new _lisp()).Ln));
         
     }

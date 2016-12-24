@@ -13,17 +13,7 @@ public class _int implements _ {
             ;
     @Override
     public void imp(Compiler C, AST target) {
-        INT = C.nnFC0("int");
-        _add = C.nnFC3("+");
-        _sub = C.nnFC3("-");
-        (target!=null?target:C.AST_L_FUNCTIONS).appendChid(new AST[] {
-           _add, _sub 
-        });
-        Object[] ss = new Object[] {
-            new bff.syntax.Syntax.s_Ni(),         iparse,
-        };
-        for(int i = 0; i < ss.length; i+=2)
-            {C.syntaxes.addSyntax( ((bff.syntax.Syntax)ss[i++]) .parser$(($)ss[i++]) );}
+        // TODO: remove method from _ ?
     }
 
     

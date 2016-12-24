@@ -186,12 +186,16 @@ public class Lexer {
         int oldStackpos = stackpos[0];
         int prevStackpos = oldStackpos;
         boolean consumedSmth = false;
-        for(int i = 0; i < node.form.size(); i++)
+        int n = node.form.size();
+        for(int i = 0; i < n; i++)
         {
             Verb c_ = node.form.get(i);
             Verb c = deepCopy(c_);
             long rec = REC;
-            if (!lexTree(c, fin, REC, wordStack, stackpos)) {
+            //if (i == n - 1) c.syntax.dirtier--; // nok
+            boolean didMatch = lexTree(c, fin, REC, wordStack, stackpos);
+            //if (i == n - 1) c.syntax.dirtier++;
+            if (!didMatch) {
                 if (isRep(c) || isMaybe(c) || allConditional(c.form, 0)) {
                     stackpos[0] = prevStackpos;
                     continue;

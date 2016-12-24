@@ -14,11 +14,11 @@ public class p_syntax implements p_ {
         FeatureInputStream fin = bff.RT.fin(in);
         fin.skipDelims();
         bff.Symbol s;
-        Holder defaults = new Holder().defaults$();
+        Holder defaults = new Holder();
         fin.mark();
         while((s = C.symb(fin.readString())) == C.kw_syntax) {
                 fin.skipDelims(); 
-                int x = fin.readUtf8();
+                char x = (char)fin.readUtf8();
                 if ('o' == x) {
                     bff.RT.throwParsee(fin, "operator syntax [o] can't be redefined");
                 }
@@ -34,10 +34,10 @@ public class p_syntax implements p_ {
                 String def = fin.readString();
                 Syntax sy = null;
                 if (parent != null) {
-                         if (bff.RT.classIs(parent, Syntax.sS.class)) {sy = new Syntax.sS();}
-                    else if (bff.RT.classIs(parent, Syntax.sE.class)) {sy = new Syntax.sE();}
-                    else if (bff.RT.classIs(parent, Syntax.sN.class)) {sy = new Syntax.sS();}
-                    else if (bff.RT.classIs(parent, Syntax.sO.class)) {sy = new Syntax.sO();}                         
+                         if (bff.RT.classIs(parent, Syntax.sS.class)) {sy = new Syntax.sS(x);}
+                    else if (bff.RT.classIs(parent, Syntax.sE.class)) {sy = new Syntax.sE(x);}
+                    else if (bff.RT.classIs(parent, Syntax.sN.class)) {sy = new Syntax.sS(x);}
+                    else if (bff.RT.classIs(parent, Syntax.sO.class)) {sy = new Syntax.sO(x);}                         
                     if (bff.RT.classIn(parent,
                             Syntax.sS.class, Syntax.sE.class, Syntax.sN.class
                     )) {
@@ -46,10 +46,9 @@ public class p_syntax implements p_ {
                         sy.parser$(bff.RT.requireClass(fin, bff.RT.getNewInstance(fin, parserClass), bff.$.class));
                     }
                 } else {
-                    sy = new Syntax();
+                    sy = new Syntax(x);
                 }
                 sy.setDirty(true); // mark this for processing later
-                sy.x = (char)x;
                 sy.s = def;
                 C.syntaxes.addSyntax(sy);
                 fin.mark();

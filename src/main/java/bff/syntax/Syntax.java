@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
  * syntax trees from bits and pieces. */
 public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
 
+    public Syntax() {}
+    public Syntax(char x) { this.x = x; }
 
     //syntax definition stx: (1) # starts a regexp (terminal);
     //                       (2) x (one character) refers back to another node; 
@@ -29,31 +31,6 @@ public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
     //      2.2. mark whichever of A and B retains the first position, with LOOKUP=c+1
     // 3. if c(A,C)>c(A,B), then reorder like this: C|A|B
     // 4. if reordering is impossible as in {A=aa,B=aab,C=A*B}, such syntax is treated as malformed
-    static public class     s_LB extends sT {{      x= '(';  s= "#\\(";         }}
-    static public class     s_RB extends sT {{      x= ')';  s= "#\\)";         }}
-    static public class     s_LC extends sT {{      x= '{';  s= "#{";           }}
-    static public class     s_RC extends sT {{      x= '}';  s= "#}";           }}
-    static public class     s_LD extends sT {{      x= '[';  s= "#\\[";         }}
-    static public class     s_RD extends sT {{      x= ']';  s= "#\\]";         }}
-    static public class     s__n extends sT {{      x= '_';  s= "#[\\s]+";      }}
-    static public class     s___ extends Syntax {{      x= ' ';  s= "_?";      }}
-    static public class     s__c extends sT {{      x= ',';  s= "#\\s*,\\s*";   }}
-    static public class     s_o extends  sO {{      x= 'o';  s= "#[!-'*-/:<-@\\^|~\\u2100-\\u239A]";      }}
-    static public class     s_Ni extends sN {{      x= 'i';  s= "#[+\\-]?([0-9]{1-10}|0x[0-9a-fA-F]{1-8})";      }}
-    static public class     s_Nl extends sN {{      x= 'l';  s= "#[+\\-]?([0-9]{1-19}|0x[0-9a-fA-F]{1-16})";      }}
-    static public class     s_Nf extends sN {{      x= 'f';  s= "#[+\\-]?([0-9]+|[0-9]*.[0-9]+|[0-9]+e[0-9]+)[fF]";      }}
-    static public class     s_Nd extends sN {{      x= 'd';  s= "#[+\\-]?([0-9]+|[0-9]*.[0-9]+|[0-9]+e[0-9]+)[dD]?";      }}
-    static public class     s_s extends  sS {{      x= 's';  s= "#[A-Za-z?_$\\u00C0-\\u02B8\\u0370-\\u03FF][\\w!?\\-$\\u00C0-\\u02B8\\u0370-\\u03FF]*";      }}    // std. symbol definition: ascii,latin,greek letters mostly
-    static public class     s_se extends  sE {{     x= 'S';  s= "s";            }}  // an expression that is a symbol
-    static public class     s_beb extends sE {{     x= 'b';  s= "( e )";        }}
-    static public class     s_oe extends  sE {{     x= '-';  s= "o e";          }}
-    static public class     s_eoe extends sE {{     x= '+';  s= "e o e";        }}
-    static public class     s_eo extends  sE {{     x= '/';  s= "e o";          }}
-    static public class    s_eoeoe extends sE{{     x= ':';  s= "e o e o e";    }}
-    static public class     s_f extends   sE {{     x= 'F';  s= "s ( e<,e>* )";    }}
-    static public class     s_e extends   sE {{     x= 'e';  s= "b|F|S|-|:|+|/";  }}
-    static public class     s_dEd extends Syntax {{     x= 'D';  s= "[ e* ]";       }}
-    static public class     s_ssbSbEbb extends Syntax {{x= '@';  s= "s_s ( s* ( e* ) )"; }}
 
     
     public static boolean isRep(Syntax s) { return bff.RT.classIs(s, Syntax.sRepeat.class); }
@@ -63,20 +40,20 @@ public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
     public static boolean isTerminal(Syntax s) { return bff.RT.classIs(s, Syntax.sT.class); }
 
     //syntax categories
-    /*all terminal sentences should inherit this*/      static public class sT extends Syntax{} 
+    /*all terminal sentences should inherit this*/      static public class sT extends Syntax{ public sT(char x) { super(x); } } 
     /*any symbols should inherit this; 
       only one variation, x= 's', 
-      should be registered at a holder*/                static public class sS extends sT{}
-    /*any numbers should inherit this*/                 static public class sN extends sT{}
+      should be registered at a holder*/                static public class sS extends sT{ public sS(char x) { super(x); } }
+    /*any numbers should inherit this*/                 static public class sN extends sT{ public sN(char x) { super(x); } }
     /*operator-defining sentences should inherit this; 
       only one variation, x= 'o',
-      should be registered at a holder*/                static public class sO extends sT{}
-    /*all expression sentences should inherit this*/    static public class sE extends Syntax{}
-    static public class sRepeat extends Syntax{{        x= '*';}}
-    static public class sAny extends    Syntax{{        x= '|';}
+      should be registered at a holder*/                static public class sO extends sT{ public sO(char x) { super(x); } }
+    /*all expression sentences should inherit this*/    static public class sE extends Syntax{ public sE(char x) { super(x); } }
+    static public final class sRepeat extends Syntax{{        x= '*';}}
+    static public final class sAny extends    Syntax{{        x= '|';}
             public sAny(int count)          { structure = new Syntax[count];}}
-    static public class sMaybe extends  Syntax{{        x= '?';}}
-    static public class sGroup extends  Syntax{{        x= '<';}
+    static public final class sMaybe extends  Syntax{{        x= '?';}}
+    static public final class sGroup extends  Syntax{{        x= '<';}
             public sGroup(int count)          { structure = new Syntax[count];}
             public sGroup(){}}
 
@@ -109,14 +86,6 @@ public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
                 bff.RT.throwRte("attempted redefinition of syntax '"+sy+" - found: "+syntaxes[sy.x]);  
             }
             syntaxes[sy.x] = sy;  count++;  }
-        public Holder defaults$() {
-            for(Syntax sy : new Syntax[]{
-                new s_LB(), new s_RB(), new s_LC(), new s_RC(), new s_LD(), new s_RD(),
-                new s__n(), new s_o(), new s_s(), 
-                new s_se(), new s_beb(), new s_oe(), new s_eoe(), new s_eo(), new s_eoeoe(),
-                new s_e(), new s_dEd()
-            }) addSyntax(sy);
-            return this; }
         public final void initAll() { for(Syntax sy : syntaxes) if (sy != null) sy.init(this); }
         public int count() { return count; }
     }

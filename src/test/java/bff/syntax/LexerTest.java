@@ -13,10 +13,11 @@ public class LexerTest {
     private Syntax ablang(final String ss, final String terminals) {
         Syntax.Holder h = new Syntax.Holder();
         for(int i = 0; i < terminals.length(); i++) { 
-            final char c = terminals.charAt(i);
-            h.addSyntax(new Syntax.sT(){{x= c; s= "#"+c;}});
+            char c = terminals.charAt(i);
+            Syntax s = new Syntax.sT(c); s.s = "#"+c;
+            h.addSyntax(s);
         }
-        Syntax lang = new Syntax.sGroup(){{x= 'S'; s= ss;}};
+        Syntax lang = new Syntax.sGroup();  lang.s = ss;
         h.addSyntax(lang);
         lang.init(h);
         return lang;

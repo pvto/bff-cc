@@ -12,12 +12,17 @@ public final class sBuilder {
         for (int i = 0; i < lang.length; ) { 
             final char c = (char)lang[i++];
             final String y = (String)lang[i++];
+            Syntax sy; 
             if (y.startsWith("#"))
-                h.addSyntax(new Syntax.sT(){{x= c; s= y;}});
+                sy = new Syntax.sT(c);
             else
-                h.addSyntax(new Syntax(){{x= c; s= y;}});
+                sy = new Syntax(c);
+            sy.s  = y;
+            h.addSyntax(sy);
         }
-        Syntax start = new Syntax(){{x= Sc; s= S;}};
+        Syntax start = new Syntax();
+        start.x= Sc; 
+        start.s= S;
         h.addSyntax(start);
         start.init(h);
         return start;
@@ -32,9 +37,10 @@ public final class sBuilder {
             final String y = (String)lang[i++];
             Syntax s;
             if (y.startsWith("#"))
-                s = new Syntax.sT(){{x= c; s= y;}};
+                s = new Syntax.sT(c);
             else
-                s = new Syntax(){{x= c; s= y;}};
+                s = new Syntax(c);
+            s.s = y;
             Object o = lang[i++];
             if (o != null) {
                 if (bff.RT.classIs(o, $.class))
@@ -46,7 +52,8 @@ public final class sBuilder {
             }
             h.addSyntax(s);
         }
-        Syntax start = new Syntax(){{x= Sc; s= S;}};
+        Syntax start = new Syntax(Sc);
+        start.s = S;
         h.addSyntax(start);
         start.init(h);
         return start;

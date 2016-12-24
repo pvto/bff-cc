@@ -31,6 +31,7 @@ public class SyntaxTest {
         Verb res = L.lex(bff.RT.fin("3+1*2*2+1"));
         res.printMatter(System.out);
         res.printVerbMatter(System.out, false);
+        res.printVerbMatter(System.out, true);
         assertEquals(8, res.eval(null));
     }
 }

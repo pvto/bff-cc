@@ -68,7 +68,7 @@ public class Verb {
     public void print(PrintStream out) { print_(out, this, 0, true, true); }
     public void printForm(PrintStream out) { print_(out, this, 0, true, false); }
     public void printMatter(PrintStream out) { print_(out, this, 0, false, true); }
-    public void printVerbForm(PrintStream out) { printVerbs_(out, this, 0, true, false); }
+    public void printVerbForm(PrintStream out, boolean indent) { printVerbs_(out, this, indent?2:-1, true, false); }
     public void printVerbMatter(PrintStream out, boolean indent) { printVerbs_(out, this, indent?2:-1, false, true); }
 
     private static void print_(PrintStream out, Verb x, int indent, boolean printForm, boolean printMatter)
@@ -96,13 +96,13 @@ public class Verb {
     private static void printVerbs_(PrintStream out, Verb x, int indent, boolean doForm, boolean doMatter)
     {
         char[] intendent = bff.Arf.repeat(' ', Math.max(indent, 0));
-        int childIndent = indent + indent>0 ? 2:0;
+        int childIndent = (indent >= 0 ? indent + 2 : indent);
         if (indent >= 0)
             out.print(intendent);
         out.print(x.eval != null ? x.eval : "");
         out.print("(");
         if (doForm && !x.form.isEmpty()) {
-//            if (indent >= 0) out.println("");
+            if (indent >= 0) out.println("");
             for (Verb c : x.form) {
                 if (c.syntax.isDirty()) {
                     printVerbs_(out, c, childIndent, false, false);
@@ -112,20 +112,16 @@ public class Verb {
                 printVerbs_(out, c, childIndent, true, false);
                 c.syntax.setDirty(false);
             }
-//            if (indent >= 0) {
-//                out.print(intendent);
-//                out.println(")");
-//            }
+            if (indent >= 0) { out.println(intendent + ")");} 
+            else { out.print(")"); }
         }
         else if (doMatter && !x.matter.isEmpty()) {
-//            if (indent >= 0) out.println("");
+            if (indent >= 0) out.println("");
             for (Verb c : x.matter) {
                 printVerbs_(out, c, childIndent, false, true);
             }
-//            if (indent >= 0) {
-//                out.print(intendent);
-//                out.println(")");
-//            }
+            if (indent >= 0) { out.println(intendent + ")");} 
+            else { out.print(")"); }
         }
         else {
             if (doForm) {
@@ -136,7 +132,7 @@ public class Verb {
             if (doMatter && x.word != null)
                 out.print(x.word);
             out.print(")");
-            //if (indent >= 0) out.println("");
+            if (indent >= 0) out.println("");
         }
     }
 

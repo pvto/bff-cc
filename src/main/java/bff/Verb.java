@@ -23,6 +23,8 @@ public class Verb {
     public Lexer.REC[] rec;
     public long record = 0L;
 
+    public Transformer postBuildMatter;
+    
     public bff.$ eval;
     public boolean NEW_SCOPE = false;
 
@@ -33,6 +35,22 @@ public class Verb {
     public Verb(int id) {
         this.id = id;
     }
+    
+    
+    public Verb f(int childOffset) { return form.get(childOffset>=0?childOffset:form.size()+childOffset); }
+    public Verb m(int childOffset) { return matter.get(childOffset>=0?childOffset:matter.size()+childOffset); }
+    
+    public interface Transformer {
+        void transform(Verb v);
+    }
+
+    public void postBuildMatter()
+    {
+        if (postBuildMatter != null)
+            postBuildMatter.transform(this);
+    }
+    
+    
 
     public Verb instancedCopy(boolean form) {
         Verb c = new Verb();
@@ -40,6 +58,7 @@ public class Verb {
         c.syntax = syntax;
         c.prev = prev;
         c.childIndex = childIndex;
+        c.postBuildMatter = postBuildMatter;
         c.eval = eval;
         c.NEW_SCOPE = NEW_SCOPE;
         if (form) {
@@ -60,7 +79,7 @@ public class Verb {
     public String toString() {
         return (word != null ? 
                 word + Arrays.toString(position) + (record > 0L ? " R" + record : "") 
-                : syntax.toString() + (rec != null ? " R" + Arrays.toString(rec) : "")
+                : ":" + syntax.toString() + (rec != null ? " R" + Arrays.toString(rec) : "")
                 ) +
                 (eval != null ? (" -> " + eval)  : "");
     }
@@ -68,8 +87,8 @@ public class Verb {
     public void print(PrintStream out) { print_(out, this, 0, true, true); }
     public void printForm(PrintStream out) { print_(out, this, 0, true, false); }
     public void printMatter(PrintStream out) { print_(out, this, 0, false, true); }
-    public void printVerbForm(PrintStream out, boolean indent) { printVerbs_(out, this, indent?2:-1, true, false); }
-    public void printVerbMatter(PrintStream out, boolean indent) { printVerbs_(out, this, indent?2:-1, false, true); }
+    public void printVerbForm(PrintStream out, boolean indent) { printVerbs_(out, this, indent?2:-1, true, false); out.println(""); }
+    public void printVerbMatter(PrintStream out, boolean indent) { printVerbs_(out, this, indent?2:-1, false, true); out.println(""); }
 
     private static void print_(PrintStream out, Verb x, int indent, boolean printForm, boolean printMatter)
     {
@@ -103,7 +122,9 @@ public class Verb {
         out.print("(");
         if (doForm && !x.form.isEmpty()) {
             if (indent >= 0) out.println("");
+            int i = 0;
             for (Verb c : x.form) {
+                if (i++ > 0 && indent < 0) out.print(",");
                 if (c.syntax.isDirty()) {
                     printVerbs_(out, c, childIndent, false, false);
                     continue;
@@ -117,10 +138,12 @@ public class Verb {
         }
         else if (doMatter && !x.matter.isEmpty()) {
             if (indent >= 0) out.println("");
+            int i = 0;
             for (Verb c : x.matter) {
+                if (i++ > 0 && indent < 0) out.print(",");
                 printVerbs_(out, c, childIndent, false, true);
             }
-            if (indent >= 0) { out.println(intendent + ")");} 
+            if (indent >= 0) { out.print(intendent); out.println(")");} 
             else { out.print(")"); }
         }
         else {

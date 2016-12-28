@@ -67,6 +67,7 @@ public class Lexer {
                 m.syntax = c;
                 m.prev = L;
                 m.childIndex = L.form.size();
+                m.postBuildMatter = c.postBuildMatter;
                 m.eval = c.eval;
                 L.form.add(m);
                 c.setDirty(true);
@@ -140,7 +141,12 @@ public class Lexer {
                 stackpos[0] = oldStackpos;
             }
         }
-        return consumed > 0;
+        if (consumed > 0)
+        {
+            node.postBuildMatter();
+            return true;
+        }
+        return false;
     }
     private boolean lexMaybe(Verb node, FeatureInputStream fin, long REC, List<WordRec> wordStack, int[] stackpos) throws IOException
     {
@@ -151,6 +157,7 @@ public class Lexer {
         int oldStackpos = stackpos[0];
         if (lexTree(c, fin, REC, wordStack, stackpos)) {
             node.matter.add(c);
+            node.postBuildMatter();
             return true;
         }
         if (node.rec != null && node.rec[0] != null) {
@@ -171,6 +178,7 @@ public class Lexer {
             long rec = REC;
             if (lexTree(c, fin, REC, wordStack, stackpos)) {
                 node.matter.add(c);
+                node.postBuildMatter();
                 // what if this branch is pruned somewhere upwards but next child would give a better branch ??? basically bad form
                 return true;
             }
@@ -202,6 +210,7 @@ public class Lexer {
                 }
                 if (consumedSmth && allConditional(node.form, i)) {
                     stackpos[0] = prevStackpos;
+                    c.postBuildMatter();
                     return true;
                 }
                 stackpos[0] = oldStackpos;
@@ -210,6 +219,9 @@ public class Lexer {
             node.matter.add(c);
             prevStackpos = stackpos[0];
             consumedSmth = true;
+        }
+        if (consumedSmth) {
+            node.postBuildMatter();
         }
         return consumedSmth;
     }
@@ -259,7 +271,6 @@ public class Lexer {
                 whitespaceReg.readItem(fin);
             }
             fin.mark();
-            int[] pos = fin.snapPos();
             word = new WordRec();
             word.streamPos = fin.snapPos();
             word.word = node.syntax.sterminal.readItem(fin);
@@ -278,6 +289,7 @@ public class Lexer {
         node.word = word.word;
         node.position = word.streamPos;
         node.record = word.record;
+        node.postBuildMatter();
         return true;
     }
 

@@ -2,6 +2,7 @@ package bff.syntax;
 
 import bff.RT;
 import bff.Scope;
+import bff.Verb;
 import bff.io.StreamRegex;
 import bff.z.Trees;
 import java.io.PrintStream;
@@ -70,6 +71,7 @@ public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
                                 public RegexMapper<Syntax.sT> mapper;
     /** */                      public int lookup = 0;
         /** runtime instruments*/   public bff.$ parser;  public <T extends Syntax> T parser$(bff.$ parser) {this.parser = parser;  return (T)this;}
+                                public Verb.Transformer postBuildMatter;
     /** passed on to lexer... */public bff.$ eval;
                                 public bff.$[] evalTmp;
     @Override public String toString() { return x + (lookup>1?"[L"+lookup+"]":"") + " -> " + (s!=null?s+" ":"") + this.getClass().getSimpleName(); }

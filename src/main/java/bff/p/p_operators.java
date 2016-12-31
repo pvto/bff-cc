@@ -15,9 +15,9 @@ public class p_operators implements p_ {
     @Override
     public void parse(InputStream in, Compiler C) throws IOException {
         final bff.io.FeatureInputStream fin = bff.RT.fin(in);
-        Syntax opparser = C.syntaxes.syntaxes['o'];
+        final Syntax opparser = C.syntaxes.syntaxes['o'];
         final List<bff.$> ops = new ArrayList<>();
-        opparser.parser = new bff.$Proxy(opparser.parser) {
+        opparser.eval = new bff.$Proxy(opparser) {
             @Override public Object eval(bff.Scope s, Object o, Object p) {
                 for(bff.$ op : ops) {
                     Symbol opname = (bff.Symbol)op.eval(s);

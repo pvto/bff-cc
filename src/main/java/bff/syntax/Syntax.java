@@ -70,8 +70,8 @@ public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
                                 public List<Syntax.sT> possibleTerminalContinuations;
                                 public RegexMapper<Syntax.sT> mapper;
     /** */                      public int lookup = 0;
-        /** runtime instruments*/   public bff.$ parser;  public <T extends Syntax> T parser$(bff.$ parser) {this.parser = parser;  return (T)this;}
-                                public Verb.Transformer postBuildMatter;
+
+    /** passed on to lexer... */public Verb.Transformer postBuildMatter;
     /** passed on to lexer... */public bff.$ eval;
                                 public bff.$[] evalTmp;
     @Override public String toString() { return x + (lookup>1?"[L"+lookup+"]":"") + " -> " + (s!=null?s+" ":"") + this.getClass().getSimpleName(); }
@@ -230,19 +230,21 @@ public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
             consumed++;
         }
 
-        while(structOffset < s.structure.length)
-        {
-            Syntax child = s.structure[structOffset++];
-            if (offset < evalTmp.length) {
-                int n = initVerbs(child, evalTmp, offset, -1);
-                offset += n;
-                consumed += n;
-            } else if (child.evalTmp != null) {
-                initVerbs(child, child.evalTmp, 0, -1);
+        if (s.structure != null) {
+            while(structOffset < s.structure.length)
+            {
+                Syntax child = s.structure[structOffset++];
+                if (offset < evalTmp.length) {
+                    int n = initVerbs(child, evalTmp, offset, -1);
+                    offset += n;
+                    consumed += n;
+                } else if (child.evalTmp != null) {
+                    initVerbs(child, child.evalTmp, 0, -1);
+                }
             }
+            if (structOffset < s.structure.length)
+                bff.RT.throwRte("Syntax " + s + ": needs more verbs (once you've started with them)");
         }
-        if (structOffset < s.structure.length)
-            bff.RT.throwRte("Syntax " + s + ": needs more verbs (once you've started with them)");
         return consumed;
     }
     

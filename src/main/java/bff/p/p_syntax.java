@@ -43,7 +43,7 @@ public class p_syntax implements p_ {
                     )) {
                         fin.skipDelims();
                         String parserClass = fin.readString();
-                        sy.parser$(bff.RT.requireClass(fin, bff.RT.getNewInstance(fin, parserClass), bff.$.class));
+//                        sy.parser$(bff.RT.requireClass(fin, bff.RT.getNewInstance(fin, parserClass), bff.$.class));
                     }
                 } else {
                     sy = new Syntax(x);

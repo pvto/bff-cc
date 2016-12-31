@@ -179,11 +179,23 @@ public class Verb {
     public Object eval(Scope scope)
     {
         if (eval == null) {
-            if (matter.size() == 1)
+            switch (matter.size())
             {
-                return meval(scope, 0);
+                case 0: return null;
+                case 1: return meval(scope, 0);
+                default:
+                    Object[] ret = new Object[matter.size()];
+                    for(int i = 0; i < matter.size(); i++)
+                    {
+                        Scope s = scope;
+                        if (NEW_SCOPE) {
+                            s = new Scope();
+                            s.parent = scope;
+                        }
+                        ret[i] = meval(s, i);
+                    }
+                    return ret;
             }
-            return null;
         }
         Scope s = scope;
         if (NEW_SCOPE) {

@@ -21,15 +21,7 @@ public class Arf {
             }
         return r;
     }
-    
-    static public AST[]     concat(AST[] A, AST[] B)
-    {
-        AST[] C = Arrays.copyOf(A, A.length+B.length);
-        System.arraycopy(B, 0, C, A.length, B.length);
-        return C;
-    }
-    
-    
+        
     
     static public Anode[]   copyOfsize(Anode[] A, int size)
     {
@@ -51,10 +43,6 @@ public class Arf {
     
     static public int[]     ints(int... I) { return I; }
 
-    static public AST       find(AST[] L, AST inst) {
-        for(AST y : L) if (y == inst || y.equals(inst)) return y;
-        return null;
-    }
 
     static public ByteArrayOutputStream copyOfRange(ByteArrayOutputStream cache, int start, int end) {
         byte[] chunk = Arrays.copyOfRange(cache.toByteArray(), start, end);

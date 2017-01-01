@@ -5,18 +5,7 @@ public class _int implements _ {
     public char _() { return 'i'; }
     public _ clone() { return new _int(); }
 
-    
-    public AST
-            INT,
-            _add,
-            _sub
-            ;
-    @Override
-    public void imp(Compiler C, AST target) {
-        // TODO: remove method from _ ?
-    }
-
-    
+        
     static public final $ iparse = new $.Id("(int)")
         {public Object eval(Scope s, Object a) { return Integer.parseInt((String)a, ((String)a).startsWith("0x")?16:10); }};
     

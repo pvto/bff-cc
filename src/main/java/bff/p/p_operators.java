@@ -17,7 +17,7 @@ public class p_operators implements p_ {
         final bff.io.FeatureInputStream fin = bff.RT.fin(in);
         final Syntax opparser = C.syntaxes.syntaxes['o'];
         final List<bff.$> ops = new ArrayList<>();
-        opparser.eval = new bff.$Proxy(opparser) {
+        opparser.eval = new bff.$.Id("op") {
             @Override public Object eval(bff.Scope s, Object o, Object p) {
                 for(bff.$ op : ops) {
                     Symbol opname = (bff.Symbol)op.eval(s);

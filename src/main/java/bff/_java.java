@@ -8,23 +8,10 @@ public class _java implements _ {
     @Override public char _() { return 'J'; }
     @Override public _ clone() { return new _java(); }
     
-    public AST
-            JAVA,
-            JAVA_new,
-            JAVA_call
-            ;
-    public void imp(Compiler C, AST target) {
-        JAVA = C.nnFC0("/");
-        JAVA_new = C.nnFC0("new");
-        JAVA_call = C.nnFC0("/");
-        (target!=null?target:C.AST_L_FUNCTIONNS).appendChid(new AST[] {
-            JAVA_new,
-            JAVA_call
-        });
-    }
     
-    static public class $java_new extends $A {
+    static public class $java_new implements $ {
 
+        @Override public Object eval(Scope s) { throw new UnsupportedOperationException("Can't j-evaluate empty"); }
         public Object eval(Scope s, Object o) {
             return getInstance(getClazz((String)o)); }
         public Object eval(Scope s, Object o, Object o2) {
@@ -49,7 +36,10 @@ public class _java implements _ {
             return getInstance(getClazz((String)o), Arf.concato(Arf.objs(o2, o3, o4, o5, o6, o7, o8, o9, o10), rest)); }
     }
     
-    static public class $java_call extends $A {
+    static public class $java_call implements $ {
+
+        @Override public Object eval(Scope s) { throw new UnsupportedOperationException("Can't j-call unprovided object; neither was method to call specified"); }
+        @Override public Object eval(Scope s, Object o) { throw new UnsupportedOperationException("Can't j-call instance object; method not specified"); }
         public Object eval(Scope s, Object inst, Object m) {
             return javaCall(getMethod(inst,m, RT.EMPTY_o), inst, RT.EMPTY_o); }
         public Object eval(Scope s, Object inst, Object m, Object p1) {

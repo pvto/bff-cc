@@ -6,7 +6,6 @@ import bff.z.AddMap;
 public interface _ {
 
     public char _();
-    public void imp(Compiler C, AST root);
     public _ clone();    
     
     static public final class def {

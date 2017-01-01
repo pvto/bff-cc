@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * 
  *  This class contains a context free parser that creates new intermediate
  * syntax trees from bits and pieces. */
-public class Syntax extends bff.$A implements Trees.Tree<Syntax> {
+public class Syntax implements Trees.Tree<Syntax> {
 
     public Syntax() {}
     public Syntax(char x) { this.x = x; }

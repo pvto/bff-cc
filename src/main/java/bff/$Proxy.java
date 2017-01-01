@@ -1,11 +1,11 @@
 package bff;
 
-public class $Proxy extends $A {
+public class $Proxy extends $.Id {
     final $ proxied;
     public $Proxy($ proxied) {
         this.proxied = proxied;
     }
-    public $A init$(AST node, int[] extref) { this.node = node;  this.extref = extref;  return this; }
+
     public Object eval(Scope s) { return proxied.eval(s); }
     public Object eval(Scope s, Object o) { return proxied.eval(s, o); }
     public Object eval(Scope s, Object o1, Object o2) { return proxied.eval(s, o1, o2); }

@@ -1,9 +1,7 @@
 package bff;
 
-import bff.io.FeatureInputStream;
 import bff.z.Amap;
 import bff.z.AddListSet;
-import java.io.InputStream;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -47,36 +45,8 @@ public class Compiler {
             LANG = symb("lang")
             ;
 
-    public AST nn(Symbol symb, AST[] chid, $ fn){ return new AST(symb, chid).fn$(fn); }
-    public AST nn(Symbol symb, AST[] chid)      { return nn(symb, chid, null); }
-    public AST nn(String repr, AST[] chid, $ fn){ return nn(symb(repr), chid, fn); }
-    public AST nnFC0(String repr)       { return nn(repr, new AST[] {}, null); }
-    public AST nnFC0(String repr, $ fn) { return nn(repr, new AST[] {}, fn); }
-    public AST nnFC2(String repr)       { return nn(repr, new AST[] { 
-            nn(kw_fn, null), nn(kw_fn, null)  }, null); }
-    public AST nnFC3(String repr)       { return nn(repr, new AST[] { 
-            nn(kw_fn, null), nn(kw_fn, null), nn(kw_fn, null) }, null); }
-        
-    final public AST rootAst =
-        nn(ROOT, new AST[]{
-            nn(kw_null, new AST[]{}),
-            nn(FUNCTIONS, new AST[] {}),
-            nn(FUNCTIONNS, new AST[] {}),
-            nn(CONSTANTS, new AST[] {}),
-            nn(LANG, new AST[] {})
-        });
-    final public AST 
-            AST_L_FUNCTIONS = rootAst.chid[1],
-            AST_L_FUNCTIONNS = rootAst.chid[2],
-            AST_L_CONSTANTS = rootAst.chid[3],
-            AST_L_LANG = rootAst.chid[4]
-            ;
-
     
     final public Set imported = new AddListSet();
 
-    public Object accept(InputStream in) {
-        FeatureInputStream fin = RT.fin(in);
-        return AST_L_LANG.fn.eval(new Scope(), fin);
-    }
+    // TODO: will this class be used?
 }

@@ -18,7 +18,6 @@ public class RT {
         Class[] classes = new Class[] {
             bff._int.class,
             bff._java.class,
-            bff._lisp.class,
             bff._map.class,
         };
         for(Class clazz : classes) {
@@ -115,8 +114,6 @@ public class RT {
         return (T)o;
     }
     
-    static public $Const crConstant(Object val) { return new $Const(val); }
-
     static public <T> LinkedList<T> ll() { return new LinkedList<T>(); }
 
     static public Object eval(Scope s, Object a) { return classIs(a, $.class) ? (($)a).eval(s) : a; }

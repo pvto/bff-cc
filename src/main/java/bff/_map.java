@@ -6,13 +6,8 @@ public class _map implements _ {
     @Override public char _() { return '#'; }
     @Override public _ clone() { return new _map(); }
     
-    public void imp(Compiler C, AST target) {
-        (target!=null?target:C.AST_L_FUNCTIONNS).appendChid(new AST[] {
-            C.nnFC0("map", new $map())
-        });
-    }
 
-    static public class $map extends $A {
+    static public class $map extends $.Id {
         
         public Object eval(Scope s, Object o1) {
             return map(s, Arf.objs(o1)); }

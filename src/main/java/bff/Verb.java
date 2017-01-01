@@ -75,6 +75,80 @@ public class Verb {
         return c;
     }
 
+    
+    public int terminalCount() {
+        return tc_(this);
+    }
+
+    private static int tc_(Verb a)
+    {
+        if (a.word != null) {
+            return 1;
+        }
+        int sum = 0;
+        for (Verb c : a.matter) { sum += tc_(c); }
+        return sum;
+    }
+    
+    
+    
+    
+    public Object eval(Scope scope)
+    {
+        if (eval == null) {
+            switch (matter.size())
+            {
+                case 0: return null;
+                case 1: return meval(scope, 0);
+                default:
+                    Object[] ret = new Object[matter.size()];
+                    for(int i = 0; i < matter.size(); i++)
+                    {
+                        Scope s = scope;
+                        if (NEW_SCOPE) {
+                            s = new Scope();
+                            s.parent = scope;
+                        }
+                        ret[i] = meval(s, i);
+                    }
+                    return ret;
+            }
+        }
+        Scope s = scope;
+        if (NEW_SCOPE) {
+            s = new Scope();
+            s.parent = scope;
+        }
+        switch (matter.size()) {
+            case 0: return eval.eval(s, word);
+            case 1: return eval.eval(s, meval(s, 0));
+            case 2: return eval.eval(s, meval(s, 0), meval(s, 1));
+            case 3: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2));
+            case 4: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3));
+            case 5: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4));
+            case 6: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5));
+            case 7: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6));
+            case 8: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6), meval(s, 7));
+            case 9: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6), meval(s, 7), meval(s, 8));
+            case 10: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6), meval(s, 7), meval(s, 8), meval(s, 9));
+            default: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6), meval(s, 7), meval(s, 8), meval(s, 9), getEvaldMatter(s, 10));
+        }
+    }
+
+    public Object meval(Scope scope, int ind) { return matter.get(ind).eval(scope); }
+
+    public Object[] getEvaldMatter(Scope scope, int offset)
+    {
+        Object[] res = new Object[matter.size() - offset];
+        for (int i = offset; i < matter.size(); i++) {
+            res[i - offset] = meval(scope, i);
+        }
+        return res;
+    }
+
+
+    
+    
     @Override
     public String toString() {
         return (word != null ? 
@@ -157,76 +231,6 @@ public class Verb {
             out.print(")");
             if (indent >= 0) out.println("");
         }
-    }
-
-    public int terminalCount() {
-        return tc_(this);
-    }
-
-    private static int tc_(Verb a)
-    {
-        if (a.word != null) {
-            return 1;
-        }
-        int sum = 0;
-        for (Verb c : a.matter) { sum += tc_(c); }
-        return sum;
-    }
-    
-    
-    
-    
-    public Object eval(Scope scope)
-    {
-        if (eval == null) {
-            switch (matter.size())
-            {
-                case 0: return null;
-                case 1: return meval(scope, 0);
-                default:
-                    Object[] ret = new Object[matter.size()];
-                    for(int i = 0; i < matter.size(); i++)
-                    {
-                        Scope s = scope;
-                        if (NEW_SCOPE) {
-                            s = new Scope();
-                            s.parent = scope;
-                        }
-                        ret[i] = meval(s, i);
-                    }
-                    return ret;
-            }
-        }
-        Scope s = scope;
-        if (NEW_SCOPE) {
-            s = new Scope();
-            s.parent = scope;
-        }
-        switch (matter.size()) {
-            case 0: return eval.eval(s, word);
-            case 1: return eval.eval(s, meval(s, 0));
-            case 2: return eval.eval(s, meval(s, 0), meval(s, 1));
-            case 3: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2));
-            case 4: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3));
-            case 5: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4));
-            case 6: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5));
-            case 7: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6));
-            case 8: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6), meval(s, 7));
-            case 9: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6), meval(s, 7), meval(s, 8));
-            case 10: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6), meval(s, 7), meval(s, 8), meval(s, 9));
-            default: return eval.eval(s, meval(s, 0), meval(s, 1), meval(s, 2), meval(s, 3), meval(s, 4), meval(s, 5), meval(s, 6), meval(s, 7), meval(s, 8), meval(s, 9), getEvaldMatter(s, 10));
-        }
-    }
-
-    public Object meval(Scope scope, int ind) { return matter.get(ind).eval(scope); }
-
-    public Object[] getEvaldMatter(Scope scope, int offset)
-    {
-        Object[] res = new Object[matter.size() - offset];
-        for (int i = offset; i < matter.size(); i++) {
-            res[i - offset] = meval(scope, i);
-        }
-        return res;
     }
 
 }

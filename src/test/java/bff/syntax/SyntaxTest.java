@@ -49,6 +49,53 @@ public class SyntaxTest {
         assertEquals(8, res.eval(null));
     }
 
+
+    
+    final Verb.Transformer xmlValidate = new Verb.Transformer() {
+        @Override public void transform(Verb v)
+        {
+            Verb a = v.m(0).m(1), // x->1->n
+                 b = v.m(-1).m(1); // x->2->n
+            if (!a.word.equals(b.word))
+                bff.RT.throwRte("expecting closing tag <"+a.word+">, but found <"+b.word+"> at line " + b.position[0] + ":" + b.position[1]);
+        }
+    };
+    
+    @Test public void testEvalXmlSimple() throws IOException
+    {
+
+        Object[] vlang = {
+            'n', "#[a-zA-Z_][0-9a-zA-Z]*", null, new $.Id("name"),
+            '^', "#[^\"]*", null, new $.Id("string"),
+            '~', "#[^']*", null, new $.Id("string"),
+            '"', "#\"", null, null,
+            '\'', "#'", null, null,
+            '(', "#<", null, null,
+            ')', "#>", null, null,
+            '/', "#/", null, null,
+            '=', "#=", null, null,
+            '-', "'~'", null, second,
+            '_', "\"^\"", null, second,
+            's', "-|_", null, null,
+            '[', "(/", null, null,
+            'a', "n=s", null, null,
+            '1', "(na*)", null, citems,
+            '2', "[n)", null, second,
+            'x', "1x*2", xmlValidate, xmlEval
+        };
+        Lexer L = new Lexer(vvlang(vlang, 'S', "x")){{whitespace = " \t\r\n";}};
+        Verb res = L.lex(bff.RT.fin("<a x='yz' y=\"A\"> <b><c><d><e></e><e e='eh'></e></d></c></b></a>"));
+        //res.printMatter(System.out);
+        res.printVerbMatter(System.out, false);
+        System.out.println(res.eval(null));
+        TestXmlNode n = (TestXmlNode) res.eval(null);
+        assertEquals("a", n.name);
+        assertEquals(2, n.attr.size());
+        assertEquals("e", n.children.get(0).children.get(0).children.get(0).children.get(0).name);
+        assertEquals(1, n.children.get(0).children.get(0).children.get(0).children.get(1).attr.size());
+        
+    }
+    
     public static class TestXmlNode {
         String name;
         Map attr = new LinkedHashMap();
@@ -79,53 +126,14 @@ public class SyntaxTest {
         public Object eval(Scope s, Object a, Object b, Object c)
         {
             TestXmlNode n = (TestXmlNode)eval(s, a, c);
-            n.children.add((TestXmlNode)b);
+            if (b instanceof Object[]) { Object[] bb = (Object[])b;
+                    for (int i = 0; i < bb.length; i++)
+                        n.children.add((TestXmlNode)bb[i]); }
+            else n.children.add((TestXmlNode)b);
             return n;
         }
     };
 
-    final Verb.Transformer xmlValidate = new Verb.Transformer() {
-        @Override public void transform(Verb v)
-        {
-            Verb a = v.m(0).m(1), // x->1->n
-                 b = v.m(-1).m(1); // x->2->n
-            if (!a.word.equals(b.word))
-                bff.RT.throwRte("expecting closing tag <"+a.word+">, but found <"+b.word+"> at line " + b.position[0] + ":" + b.position[1]);
-        }
-    };
+    // end Xml eval related classes
     
-    @Test public void testEvalStructured() throws IOException
-    {
-
-        Object[] vlang = {
-            'n', "#[a-zA-Z_][0-9a-zA-Z]*", null, new $.Id("name"),
-            '^', "#[^\"]*", null, new $.Id("string"),
-            '~', "#[^']*", null, new $.Id("string"),
-            '"', "#\"", null, null,
-            '\'', "#'", null, null,
-            '(', "#<", null, null,
-            ')', "#>", null, null,
-            '/', "#/", null, null,
-            '=', "#=", null, null,
-            '-', "'~'", null, second,
-            '_', "\"^\"", null, second,
-            's', "-|_", null, null,
-            '[', "(/", null, null,
-            'a', "n=s", null, null,
-            '1', "(na*)", null, citems,
-            '2', "[n)", null, second,
-            'x', "1x?2", xmlValidate, xmlEval
-        };
-        Lexer L = new Lexer(vvlang(vlang, 'S', "x")){{whitespace = " \t\r\n";}};
-        Verb res = L.lex(bff.RT.fin("<a x='yz' y=\"A\"> <b><c><d><e e='eh'></e></d></c></b></a>"));
-        //res.printMatter(System.out);
-        res.printVerbMatter(System.out, false);
-        System.out.println(res.eval(null));
-        TestXmlNode n = (TestXmlNode) res.eval(null);
-        assertEquals("a", n.name);
-        assertEquals(2, n.attr.size());
-        assertEquals("e", n.children.get(0).children.get(0).children.get(0).children.get(0).name);
-        assertEquals(1, n.children.get(0).children.get(0).children.get(0).children.get(0).attr.size());
-        
-    }
 }
